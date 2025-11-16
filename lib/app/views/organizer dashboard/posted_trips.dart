@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
+import 'package:trip_misr/app/data/models/tripModel.dart';
+import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
+import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_card.dart';
+import 'package:trip_misr/utils/app_colors.dart';
+import 'package:trip_misr/utils/app_fonts.dart';
+
+class PostedTripsView extends StatelessWidget {
+  const PostedTripsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<PostedTripsCubit>().getOrganizerPostedTrips();
+        },
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Posted Trips',
+                style: AppFonts.kBoldFont
+                    .copyWith(color: AppColors.kBlue, fontSize: 30),
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<PostedTripsCubit, PostedTripsState>(
+                builder: (context, state) {
+                  if (state is PostedTripLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is PostedTripsSuccess) {
+                    if (state.trips.isEmpty) {
+                      return  Center(
+                          child: NoBookedTripsWidget(
+                        text: 'No Posted Trips',
+                        onPressed: () async {
+                          await context
+                              .read<PostedTripsCubit>()
+                              .getOrganizerPostedTrips();
+                        },
+                      ));
+                    }
+                    return ListView.builder(
+                        itemCount: state.trips.length,
+                        itemBuilder: (context, index) => PostedTripsCard(
+                              postedTrip: state.trips[index],
+                            ));
+                  }
+
+                  return Center(
+                      child: NoBookedTripsWidget(
+                    text: 'There Was an Error \n Please Try again !!',
+                    onPressed: () async {
+                      await context
+                          .read<PostedTripsCubit>()
+                          .getOrganizerPostedTrips();
+                    },
+                  ));
+                  ;
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:trip_misr/app/data/models/tripModel.dart';
+// import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_card.dart';
+// import 'package:trip_misr/utils/app_colors.dart';
+// import 'package:trip_misr/utils/app_fonts.dart';
+// import 'package:trip_misr/app/data/repositories/posted_trip_repo.dart';
+
+// class PostedTripsView extends StatelessWidget {
+//   const PostedTripsView({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         child: Center(
+//           child: Column(
+//             children: [
+//               const SizedBox(height: 12),
+//               Text(
+//                 'Posted Trips',
+//                 style: AppFonts.kBoldFont
+//                     .copyWith(color: AppColors.kOrange, fontSize: 24),
+//               ),
+//               const SizedBox(height: 16),
+
+//               // ✅ FutureBuilder to handle async data
+//               Expanded(
+//                 child: FutureBuilder<List<TripModel>>(
+//                   future: PostedTripRepo().fetchPostedTrips(),
+//                   builder: (context, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return const Center(child: CircularProgressIndicator());
+//                     } else if (snapshot.hasError) {
+//                       return Center(
+//                         child: Text(
+//                           'Error: ${snapshot.error}',
+//                           style: const TextStyle(color: Colors.red),
+//                         ),
+//                       );
+//                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//                       return const Center(
+//                         child: Text(
+//                           'No trips posted yet.',
+//                           style: TextStyle(color: Colors.grey),
+//                         ),
+//                       );
+//                     }
+
+//                     final trips = snapshot.data!;
+//                     return ListView.builder(
+//                       itemCount: trips.length,
+//                       itemBuilder: (context, index) {
+//                         final trip = trips[index];
+//                         return Padding(
+//                           padding: const EdgeInsets.symmetric(
+//                               horizontal: 16, vertical: 8),
+//                           child: PostedTripsCard(postedTrip: trip),
+//                         );
+//                       },
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
