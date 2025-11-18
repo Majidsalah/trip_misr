@@ -1,0 +1,4 @@
+<resources>
+    <!-- Supabase + Google Sign-In WEB CLIENT ID -->
+    <string name="default_web_client_id">555302915003-p57k3qmdg1jmc09cusmiij02k8qfqfuo.apps.googleusercontent.com</string>
+</resources>

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trip_misr/app/controllers/addTrip%20cubit/add_trip_cubit.dart';
 import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
+import 'package:trip_misr/app/controllers/booking_cubit/booking_cubit.dart';
 import 'package:trip_misr/app/controllers/login%20cubit/login_cubit.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/app/data/repositories/authRepo.dart';
@@ -54,14 +55,21 @@ abstract class AppRouter {
       GoRoute(
         path: kBookingScreen,
         builder: (context, state) {
-          return const CustomerBooking();
+          final trip = state.extra as TripModel;
+          return BlocProvider(
+            create: (context) => BookingCubit(),
+            child: CustomerBooking(trip: trip),
+          );
         },
       ),
       GoRoute(
         path: kDetailes,
         builder: (context, state) {
-          return  BlocProvider(
-              create: (context) => AllTripsCubit(), child:  DetailsScreen(trip:state.extra as TripModel,));
+          return BlocProvider(
+              create: (context) => AllTripsCubit(),
+              child: DetailsScreen(
+                trip: state.extra as TripModel,
+              ));
         },
       ),
       GoRoute(

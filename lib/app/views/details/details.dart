@@ -36,7 +36,7 @@ class DetailsScreen extends StatelessWidget {
                       .copyWith(color: Colors.white, fontSize: 20.7),
                 ),
                 onTap: () {
-                  GoRouter.of(context).push(AppRouter.kBookingScreen);
+                  GoRouter.of(context).push(AppRouter.kBookingScreen,extra: trip);
                 },
               ),
               const SizedBox(height: 16),

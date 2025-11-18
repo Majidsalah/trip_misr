@@ -1,6 +1,7 @@
 class TripModel {
   final String title;
   final String? id;
+  final String? organizerId;
   final String? description;
   final String? governorate;
   final String? gatheringPlace;
@@ -21,6 +22,7 @@ class TripModel {
   TripModel({
     required this.title,
     this.id,
+    this.organizerId,
     this.description,
     this.governorate,
     this.gatheringPlace,
@@ -42,6 +44,7 @@ class TripModel {
   factory TripModel.fromJson(Map<String, dynamic> json) => TripModel(
         title: json['title'] as String,
         id: json['id'] as String,
+        organizerId:json['organizer_id'] as String,
         description: json['description'] as String?,
         governorate: json['governorate'] as String?,
         gatheringPlace: json['gathering_place'] as String?,
