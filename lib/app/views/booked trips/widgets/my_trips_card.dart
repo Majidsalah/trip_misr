@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/utils/app_colors.dart';
-import 'package:trip_misr/utils/app_fonts.dart';     
+import 'package:trip_misr/utils/app_fonts.dart';
 
 class MyTripsCard extends StatelessWidget {
-  const MyTripsCard({super.key});
+  const MyTripsCard({super.key, required this.trip});
+  final TripModel trip;
 
   @override
   Widget build(BuildContext context) {
+    final String formattedTime =
+        (trip.startTime != null && trip.startTime!.isNotEmpty)
+            ? DateFormat("h:mm a").format(
+                DateFormat('HH:mm:ss').parse(trip.startTime!),
+              )
+            : '—';
     return Container(
       height: 200,
       margin: const EdgeInsets.all(16),
@@ -23,7 +32,7 @@ class MyTripsCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(13),
-                  child: Image.asset('assets/28612.jpg',
+                  child: Image.network(trip.images!.first,
                       fit: BoxFit.cover, width: 150, height: 120),
                 ),
                 const SizedBox(width: 8),
@@ -31,13 +40,12 @@ class MyTripsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Taba',
+                      trip.title,
                       style: AppFonts.kRegularFont
                           .copyWith(color: AppColors.kBlue, fontSize: 20),
                     ),
-                  
                     Text(
-                      '📍Sinai, Egypt',
+                      '📍${trip.governorate}, Egypt',
                       style: AppFonts.kLightFont
                           .copyWith(color: AppColors.kLightBlue1, fontSize: 15),
                     ),
@@ -46,7 +54,7 @@ class MyTripsCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.group),
                         Text(
-                          ' Point: damietta',
+                          ' Point: ${trip.gatheringPlace}',
                           style: AppFonts.kRegularFont.copyWith(
                             fontSize: 12,
                           ),
@@ -58,7 +66,7 @@ class MyTripsCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.schedule),
                         Text(
-                          ' Time: 6:00 am',
+                          ' Time: $formattedTime',
                           style: AppFonts.kRegularFont.copyWith(
                             fontSize: 12,
                           ),
@@ -75,20 +83,20 @@ class MyTripsCard extends StatelessWidget {
                 const Icon(Icons.calendar_month),
                 const SizedBox(width: 4),
                 Text(
-                  'Date: 3/8/2025',
+                  'Date:${DateFormat('dd/MM/yyyy').format(trip.startDate).toString()}',
                   style: AppFonts.kRegularFont.copyWith(
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(width: 18),
-                const Icon(Icons.hourglass_bottom),
-                const SizedBox(width: 4),
-                Text(
-                  'Duration: 4/days',
-                  style: AppFonts.kRegularFont.copyWith(
-                    fontSize: 14,
-                  ),
-                )
+                // const Icon(Icons.hourglass_bottom),
+                // const SizedBox(width: 4),
+                // Text(
+                //   'Duration: 4/days',
+                //   style: AppFonts.kRegularFont.copyWith(
+                //     fontSize: 14,
+                //   ),
+                // )
               ],
             )
           ],

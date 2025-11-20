@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trip_misr/app/controllers/Usercubit/user_cubit.dart';
+import 'package:trip_misr/app/controllers/booking_cubit/booking_cubit.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/my_trips.dart';
 import 'package:trip_misr/app/views/home/widgets/home_screen_body.dart';
@@ -84,13 +84,16 @@ class Home extends StatelessWidget {
           const HomeScreenBody(),
           BlocProvider(
             create: (context) => PostedTripsCubit()..getOrganizerPostedTrips(),
-            child:  PostedTripsView(),
+            child: PostedTripsView(),
           ), // شاشة Trips للمنظم
         ];
       case UserType.normal:
-        return const [
+        return  [
           HomeScreenBody(),
-          MyTrips(), // شاشة Trips لليوزر العادي
+          BlocProvider(
+            create: (context) => BookingCubit()..getBookedTripByCustomer(),
+            child: MyTrips(),
+          ), // شاشة Trips لليوزر العادي
         ];
       case UserType.guest:
         return const [

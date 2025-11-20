@@ -19,7 +19,7 @@ class SucessBooking extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.done,
+                Icons.done_rounded,
                 size: 100,
                 color: Colors.green,
               ),
