@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
 
 class NoBookedTripsWidget extends StatelessWidget {
-  const NoBookedTripsWidget(
-      {super.key, required this.text, this.onPressed, });
+  const NoBookedTripsWidget({
+    super.key,
+    required this.text,
+    this.onPressed,
+  });
   final String text;
- final void Function()? onPressed;
+  final void Function()? onPressed;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -29,6 +32,14 @@ class NoBookedTripsWidget extends StatelessWidget {
           ),
           TextButton(
             onPressed: onPressed,
+            style: ButtonStyle(
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  side: const BorderSide(color: Colors.red), // لو عايز بوردر
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
             child: Text(
               'Try Again',
               style: AppFonts.kBoldFont.copyWith(

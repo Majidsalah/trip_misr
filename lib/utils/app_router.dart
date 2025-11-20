@@ -4,15 +4,18 @@ import 'package:trip_misr/app/controllers/addTrip%20cubit/add_trip_cubit.dart';
 import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/controllers/booking_cubit/booking_cubit.dart';
 import 'package:trip_misr/app/controllers/login%20cubit/login_cubit.dart';
+import 'package:trip_misr/app/data/models/bookingModel.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/app/data/repositories/authRepo.dart';
 import 'package:trip_misr/app/views/auth/welcom.dart';
 import 'package:trip_misr/app/views/booked%20trips/my_trips.dart';
+import 'package:trip_misr/app/views/booking/sucess_booking.dart';
 import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/addTrip.dart';
 import 'package:trip_misr/app/views/booking/customerBooking.dart';
 import 'package:trip_misr/app/views/details/details.dart';
 import 'package:trip_misr/app/views/home/home_screen.dart';
 import 'package:trip_misr/app/views/auth/login.dart';
+import 'package:trip_misr/app/views/organizer%20dashboard/booked%20customers/booked_customers.dart';
 import 'package:trip_misr/app/views/splash/splashScreen.dart';
 import 'package:trip_misr/utils/shared_pref.dart';
 import 'package:trip_misr/utils/user_type.dart';
@@ -26,6 +29,8 @@ abstract class AppRouter {
   static String kAddTripScreen = '/addTrip';
   static String kMyTrips = '/myTrips';
   static String kWelcome = '/welcom';
+  static String kSucess = '/sucess';
+  static String kBookedCustomers = '/bookedCustomers';
 
   static final GoRouter router = GoRouter(
     initialLocation: kSplashView,
@@ -34,6 +39,22 @@ abstract class AppRouter {
         path: kSplashView,
         builder: (context, state) {
           return const Splashscreen();
+        },
+      ),
+      GoRoute(
+        path: kSucess,
+        builder: (context, state) {
+          return const SucessBooking();
+        },
+      ),
+      GoRoute(
+        path: kBookedCustomers,
+        builder: (context, state) {
+          final tripId = state.extra as String;
+          return BlocProvider(
+            create: (context) => BookingCubit()..getBookedCustomersByTrip(tripId),
+            child: BookedCustomers(tripId: tripId),
+          );
         },
       ),
       GoRoute(

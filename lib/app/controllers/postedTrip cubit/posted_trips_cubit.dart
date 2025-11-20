@@ -23,7 +23,12 @@ class PostedTripsCubit extends Cubit<PostedTripsState> {
     final response = await postedTripRepo.delete(id);
     response.fold(
       (fail) => emit(DeletingTripsFailed()),
-      (success) => emit(DeletingTripsSucces()),
+      (success) async {
+      emit(DeletingTripsSucces());
+
+      /// ⭐ تحميل الرحلات بعد الحذف مباشرة
+      await getOrganizerPostedTrips();
+    },
     );
   }
 }

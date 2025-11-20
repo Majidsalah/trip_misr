@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
-import 'package:trip_misr/app/data/repositories/trips_repo.dart';
 import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/trip_switer.dart';
 import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
-import 'package:trip_misr/utils/loading_indicator.dart';
-import 'package:trip_misr/utils/snackBar.dart';
+
 
 class PostedTripsCard extends StatelessWidget {
   const PostedTripsCard({super.key, required this.postedTrip});
@@ -55,7 +53,6 @@ class PostedTripsCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // العنوان بياخد المساحة اللي محتاجها فقط
                         Text(
                           postedTrip.title,
                           style: AppFonts.kRegularFont.copyWith(
@@ -117,9 +114,9 @@ class PostedTripsCard extends StatelessWidget {
             ),
             Row(
               children: [
-                const Icon(Icons.luggage),
+                Icon(Icons.luggage),
                 Text(
-                  ' Bookings: 20',
+                  'Bookings: ${postedTrip.totalBookings.toString()}',
                   style: AppFonts.kRegularFont.copyWith(
                     fontSize: 14,
                   ),
@@ -134,93 +131,60 @@ class PostedTripsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPopUpMenu(String id, context) {
-    return PopupMenuButton(
-        // constraints: const BoxConstraints(
-        //   maxWidth: 150,
-        // ),
-        color: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(20.0),
-          ),
+  Widget _buildPopUpMenu(String id, BuildContext context) {
+    return PopupMenuButton<String>(
+      color: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+      position: PopupMenuPosition.under,
+      icon: const Icon(Icons.more_vert_outlined, size: 24, color: Colors.black),
+      onSelected: (value) {
+        if (value == "delete") {
+          _showDeleteDialog(context, id);
+        }
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: "delete",
+          child: Center(child: Text("Delete")),
         ),
-        position: PopupMenuPosition.under,
-        icon:
-            const Icon(Icons.more_vert_outlined, size: 24, color: Colors.black),
-        itemBuilder: (context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                onTap: () {
-                  // context that has PostedTripsCubit
+      ],
+    );
+  }
 
-                  showDialog(
-                      // ignore: use_build_context_synchronously
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          actions: [
-                            BlocProvider(
-                              create: (BuildContext context) =>
-                                  PostedTripsCubit(),
-                              child: BlocBuilder<PostedTripsCubit,
-                                  PostedTripsState>(
-                                builder: (context, state) {
-                                  if (state is DeletingTripsSucces) {
-                                    mySnackBar(context,
-                                        sucess: 'Trip deleted Successfully ');
-                                    return Center(
-                                        child: Text(
-                                      "Trip deleted Successfully",
-                                    ));
-                                  } else if (state is DeletingTripsFailed) {
-                                    mySnackBar(context,
-                                        failed: 'Cant delete this Trip !!');
-                                    return Center(
-                                        child: Text(
-                                      "Cant delete this Trip !!",
-                                    ));
-                                  } else if (state is DeletingTripsLoading) {
-                                    showProgressIndicator(context);
-                                  }
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      TextButton(
-                                          onPressed: () async {
-                                            await BlocProvider.of<
-                                                    PostedTripsCubit>(context)
-                                                .deletePostedTripById(id);
-                                          },
-                                          child: Center(
-                                              child: Text('delete',
-                                                  style: const TextStyle(
-                                                      color: Colors.red)))),
-                                      const Spacer(flex: 1),
-                                      TextButton(
-                                        onPressed: () {},
-                                        child: Center(
-                                          child: Text(
-                                            "cancel",
-                                            style: const TextStyle(
-                                                color: Colors.green),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        );
-                      });
+  void _showDeleteDialog(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text("Delete Trip ?"),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  context.read<PostedTripsCubit>().deletePostedTripById(id);
+                  Navigator.of(context).pop();
                 },
-                child: const Center(
-                    child: Text(
+                child: const Text(
                   'Delete',
-                )),
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
-            ]);
+              const Spacer(),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,42 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
-import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_card.dart';
+import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_cards.dart';
 import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
+import 'package:trip_misr/utils/app_router.dart';
 
 class PostedTripsView extends StatelessWidget {
   const PostedTripsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await context.read<PostedTripsCubit>().getOrganizerPostedTrips();
-        },
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Posted Trips',
-                style: AppFonts.kBoldFont
-                    .copyWith(color: AppColors.kBlue, fontSize: 30),
-              ),
+    return BlocListener<PostedTripsCubit, PostedTripsState>(
+      listener: (context, state) {
+        if (state is DeletingTripsSucces) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Trip deleted successfully"),
+              backgroundColor: Colors.green,
             ),
-            Expanded(
-              child: BlocBuilder<PostedTripsCubit, PostedTripsState>(
-                builder: (context, state) {
-                  if (state is PostedTripLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is PostedTripsSuccess) {
-                    if (state.trips.isEmpty) {
-                      return  Center(
+          );
+        }
+
+        if (state is DeletingTripsFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Cannot delete this trip"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await context.read<PostedTripsCubit>().getOrganizerPostedTrips();
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Posted Trips',
+                  style: AppFonts.kBoldFont
+                      .copyWith(color: AppColors.kBlue, fontSize: 30),
+                ),
+              ),
+              Expanded(
+                child: BlocBuilder<PostedTripsCubit, PostedTripsState>(
+                  builder: (context, state) {
+                    if (state is PostedTripLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is PostedTripsSuccess) {
+                      if (state.trips.isEmpty) {
+                        return Center(
+                            child: NoBookedTripsWidget(
+                          text: 'No Posted Trips',
+                          onPressed: () async {
+                            await context
+                                .read<PostedTripsCubit>()
+                                .getOrganizerPostedTrips();
+                          },
+                        ));
+                      }
+                      return ListView.builder(
+                        itemCount: state.trips.length,
+                        itemBuilder: (context, index) => InkWell(
+                          onTap: () {
+                            GoRouter.of(context).push(
+                              AppRouter.kBookedCustomers,
+                              extra: state.trips[index].id!,
+                            );
+                          },
+                          child: PostedTripsCard(
+                            postedTrip: state.trips[index],
+                          ),
+                        ),
+                      );
+                    } else if (state is PostedTripsFailed) {
+                      return Center(
                           child: NoBookedTripsWidget(
-                        text: 'No Posted Trips',
+                        text: 'There Was an Error \n Please Try again !!',
                         onPressed: () async {
                           await context
                               .read<PostedTripsCubit>()
@@ -44,27 +91,12 @@ class PostedTripsView extends StatelessWidget {
                         },
                       ));
                     }
-                    return ListView.builder(
-                        itemCount: state.trips.length,
-                        itemBuilder: (context, index) => PostedTripsCard(
-                              postedTrip: state.trips[index],
-                            ));
-                  }
-
-                  return Center(
-                      child: NoBookedTripsWidget(
-                    text: 'There Was an Error \n Please Try again !!',
-                    onPressed: () async {
-                      await context
-                          .read<PostedTripsCubit>()
-                          .getOrganizerPostedTrips();
-                    },
-                  ));
-                  ;
-                },
+                    return SizedBox.shrink();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

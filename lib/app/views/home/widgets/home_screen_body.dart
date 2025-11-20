@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/controllers/login%20cubit/login_cubit.dart';
+import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
 import 'package:trip_misr/app/views/home/widgets/place_card_list.dart';
 import 'package:trip_misr/app/views/home/widgets/place_category_listg.dart';
@@ -75,9 +76,12 @@ class HomeScreenBody extends StatelessWidget {
                       _buildCardSwiper(images),
                       const PlaceCategoryList(),
                       const SizedBox(height: 12),
-                      PlaceCardList(
-                        trips: isSuccess ? state.trips : [],
-                        images: images,
+                      BlocProvider(
+                        create: (context) => PostedTripsCubit(),
+                        child: PlaceCardList(
+                          trips: isSuccess ? state.trips : [],
+                          images: images,
+                        ),
                       ),
                     ],
                   ),

@@ -16,12 +16,14 @@ class TripModel {
   final List<String>? visits;
   final List<String>? activities;
   final double price;
+  final int? totalBookings;
   final bool isActive;
   final List<String>? images;
 
-  TripModel({
+  TripModel( {
     required this.title,
     this.id,
+    this.totalBookings,
     this.organizerId,
     this.description,
     this.governorate,
@@ -62,6 +64,7 @@ class TripModel {
         activities:
             (json['activities'] as List?)?.map((e) => e.toString()).toList(),
         price: (json['price'] as num).toDouble(),
+        totalBookings: (json['total_bookings'] as num).toInt(),
         isActive: json['is_active'] ?? true,
         images: (json['images'] as List?)?.map((e) => e.toString()).toList(),
       );
@@ -85,6 +88,7 @@ class TripModel {
         'price': price,
         'is_active': isActive,
         'images': images,
+        'total_bookings':totalBookings,
       };
   TripModel copyWith({
     String? title,

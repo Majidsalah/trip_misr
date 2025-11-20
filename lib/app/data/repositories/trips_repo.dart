@@ -32,6 +32,20 @@ class TripsRepo {
     }
   }
 
+  List<BookingModel> parseBookingResponse(dynamic response) {
+    if (response == null) return [];
+
+    try {
+      final List data = response as List;
+      return data
+          .map((e) => BookingModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      log("Error parsing trips: $e");
+      return [];
+    }
+  }
+
   Future<Either<Failure, List<TripModel>>> fetchPostedTrips() async {
     try {
       final response =
@@ -111,6 +125,37 @@ class TripsRepo {
         log('Unexpected Error: $e');
         return left(Failure(e.toString()));
       }
+    }
+  }
+
+  Future<Either<Failure, List<BookingModel>>> getBookedCustomersByTrip(
+      String tripId) async {
+    try {
+      final response = await supabase
+          .from('bookings_full')
+          .select('*')
+          .eq("trip_id", tripId);
+      final trips = parseBookingResponse(response);
+      log(trips.first.customerName);
+      return right(trips);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, List<BookingModel>>> getBookedTripByCustomer() async {
+    try {
+      final response = await supabase
+          .from('bookings_full')
+          .select('*, trips(*)')
+          .eq("customer_id", userId);
+          // log(response.toString());
+      final trips = parseBookingResponse(response);
+          log(trips.first.tripModel!.governorate.toString());
+
+      return right(trips);
+    } catch (e) {
+      return left(Failure(e.toString()));
     }
   }
 }

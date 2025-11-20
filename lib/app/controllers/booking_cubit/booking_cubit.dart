@@ -7,6 +7,7 @@ part 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
   BookingCubit() : super(BookingInitial());
+
   Future<void> createBooking(BookingModel booking) async {
     final TripsRepo tripsRepo = TripsRepo();
 
@@ -17,6 +18,32 @@ class BookingCubit extends Cubit<BookingState> {
     response.fold(
       (failure) => emit(BookingFailure()),
       (sucess) => emit(BookingSuccess()),
+    );
+  }
+
+  Future<void> getBookedCustomersByTrip(String tripId) async {
+    final TripsRepo tripsRepo = TripsRepo();
+
+    emit(BookedCustomersLoading());
+
+    final response = await tripsRepo.getBookedCustomersByTrip(tripId);
+
+    response.fold(
+      (failure) => emit(BookedCustomersFailure()),
+      (booked) => emit(BookedCustomersSuccess(booked)),
+    );
+  }
+
+  Future<void> getBookedTripByCustomer() async {
+    final TripsRepo tripsRepo = TripsRepo();
+
+    emit(TripsBookedByCustomerLoading());
+
+    final response = await tripsRepo.getBookedTripByCustomer();
+
+    response.fold(
+      (failure) => emit(TripsBookedByCustomerFailure()),
+      (booked) => emit(TripsBookedByCustomerSuccess(booked)),
     );
   }
 }
