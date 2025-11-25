@@ -25,8 +25,7 @@ class DetalisImageState extends State<DetalisImage> {
   @override
   Widget build(BuildContext context) {
     final hasImages = widget.images.isNotEmpty;
-    final thumbnails =
-        hasImages ? widget.images : ['assets/default_placeholder.jpg'];
+    final thumbnails = widget.images;
     return Container(
       height: 400,
       width: 400,
@@ -49,10 +48,16 @@ class DetalisImageState extends State<DetalisImage> {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                thumbnails[selectedIndex],
-                fit: BoxFit.cover,
-              ),
+              child: hasImages
+                  ? Image.network(
+                      thumbnails[selectedIndex],
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                    'assets/no_trips.png',
+                    fit: BoxFit.fitHeight,
+                                      
+                  ),
             ),
           ),
           Positioned(

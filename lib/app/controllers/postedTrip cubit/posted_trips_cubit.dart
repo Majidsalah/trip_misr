@@ -26,7 +26,6 @@ class PostedTripsCubit extends Cubit<PostedTripsState> {
       (success) async {
       emit(DeletingTripsSucces());
 
-      /// ⭐ تحميل الرحلات بعد الحذف مباشرة
       await getOrganizerPostedTrips();
     },
     );

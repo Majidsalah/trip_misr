@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,8 +18,23 @@ import 'package:trip_misr/utils/app_router.dart';
 import 'package:trip_misr/utils/shared_pref.dart';
 import 'package:trip_misr/utils/user_type.dart';
 
-class HomeScreenBody extends StatelessWidget {
+class HomeScreenBody extends StatefulWidget {
   const HomeScreenBody({super.key});
+
+  @override
+  State<HomeScreenBody> createState() => _HomeScreenBodyState();
+}
+
+class _HomeScreenBodyState extends State<HomeScreenBody> {
+  final fromController = TextEditingController();
+  final toController = TextEditingController();
+
+  @override
+  void dispose() {
+    fromController.dispose();
+    toController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +89,11 @@ class HomeScreenBody extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildWelcomeText(),
                       const SizedBox(height: 8),
-                      _buidSearchBar(),
+                      _buidSearchBar(
+                          context, fromController, toController),
                       _buildCardSwiper(images),
-                      const PlaceCategoryList(),
+                       Divider(color:  AppColors.kOrange,),
+                      // const PlaceCategoryList(),
                       const SizedBox(height: 12),
                       BlocProvider(
                         create: (context) => PostedTripsCubit(),
@@ -95,17 +114,27 @@ class HomeScreenBody extends StatelessWidget {
   }
 }
 
-Widget _buidSearchBar() {
+Widget _buidSearchBar(
+  BuildContext context,
+  TextEditingController fromController,
+  TextEditingController toController,
+) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Container(
-        width: 100,
+        width: 150,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppColors.kOrange, width: 1.5)),
         child: TextField(
-          onChanged: (text) {},
+          controller: fromController,
+          onChanged: (_) {
+            context.read<AllTripsCubit>().searchTrips(
+                  fromController.text,
+                  toController.text,
+                );
+          },
           decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(10),
               hintText: 'From',
@@ -116,12 +145,18 @@ Widget _buidSearchBar() {
       ),
       const Icon(Icons.swap_horiz),
       Container(
-        width: 100,
+        width: 150,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppColors.kOrange, width: 1.5)),
         child: TextField(
-          onChanged: (text) {},
+          controller: toController,
+          onChanged: (_) {
+            context.read<AllTripsCubit>().searchTrips(
+                  fromController.text,
+                  toController.text,
+                );
+          },
           decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(10),
               hintText: 'To',
@@ -158,10 +193,11 @@ Widget _buildCustomAppBar(context) {
           : BlocProvider(
               create: (context) => LoginCubit(),
               child: UserAvatar(
-                userName: ShPref.getUserAvatar(),
+                avatarUrl: ShPref.getUserAvatar(),
                 currentUserType: currentUserType(),
               ),
             ),
+          
     ],
   );
 }

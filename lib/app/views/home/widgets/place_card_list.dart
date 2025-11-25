@@ -115,8 +115,6 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:go_router/go_router.dart';
@@ -138,14 +136,26 @@ class PlaceCardList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (trips.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 50),
-          child: Text("No trips available right now"),
+          child: Column(
+            spacing: 20,
+            children: [
+              SizedBox(
+                height: 140,
+                child: Image.asset(
+                  'assets/no_trips.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Text("No available trips right now",
+                  style: AppFonts.kBoldFont.copyWith(fontSize: 16)),
+            ],
+          ),
         ),
       );
     }
-
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -201,14 +211,12 @@ class PlaceCardList extends StatelessWidget {
                       pagination: const SwiperPagination(),
                     ),
                   )
-                : Image.network(
-                    // fallback image
-                    images.isNotEmpty
-                        ? images.first
-                        : 'https://via.placeholder.com/300',
+                : SizedBox(
                     height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                    child: Image.asset(
+                      'assets/no_trips.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
           ),
 
@@ -231,13 +239,22 @@ class PlaceCardList extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.location_on,
-                              color: AppColors.kOrange, size: 16),
-                          const SizedBox(width: 4),
                           Text(
-                            trip.title,
-                            style: AppFonts.kRegularFont.copyWith(fontSize: 12),
+                            ' ${trip.governorate}',
+                            style: AppFonts.kBoldFont.copyWith(
+                                fontSize: 12, color: AppColors.kOrange),
                           ),
+                          Icon(
+                            Icons.swap_horiz,
+                            color: AppColors.kBlue,
+                          ),
+                          Text(
+                            ' ${trip.title}',
+                            style: AppFonts.kBoldFont
+                                .copyWith(fontSize: 12,color:  AppColors.kOrange),
+                          ),
+
+                        
                         ],
                       ),
                     ],

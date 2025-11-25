@@ -81,7 +81,7 @@ class Home extends StatelessWidget {
     switch (type) {
       case UserType.oragnizer:
         return [
-          const HomeScreenBody(),
+           HomeScreenBody(),
           BlocProvider(
             create: (context) => PostedTripsCubit()..getOrganizerPostedTrips(),
             child: PostedTripsView(),
@@ -96,7 +96,7 @@ class Home extends StatelessWidget {
           ), // شاشة Trips لليوزر العادي
         ];
       case UserType.guest:
-        return const [
+        return [
           HomeScreenBody(), // بس الـ Explore
         ];
     }

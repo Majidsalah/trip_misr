@@ -48,7 +48,7 @@ class Authrepo {
       }
 
       final supaBaseUser = SupabaseUser.fromJson(user.toJson());
-      final userAvatar = supaBaseUser.identities.first.identityData.name;
+      final userAvatar = supaBaseUser.identities.first.identityData.avatarUrl;
 
       await ShPref.saveUserAvatar(userAvatar);
 

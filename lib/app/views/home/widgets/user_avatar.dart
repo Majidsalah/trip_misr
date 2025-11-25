@@ -8,11 +8,11 @@ import 'package:trip_misr/utils/loading_indicator.dart';
 import 'package:trip_misr/utils/user_type.dart';
 
 class UserAvatar extends StatelessWidget {
-  final String? userName;
+  final String? avatarUrl;
   final UserType currentUserType;
 
-  UserAvatar(
-      {super.key, required this.userName, required this.currentUserType});
+  const UserAvatar(
+      {super.key, required this.avatarUrl, required this.currentUserType});
 
   @override
   Widget build(BuildContext context) {
@@ -38,47 +38,48 @@ class UserAvatar extends StatelessWidget {
         }
       },
       child: PopupMenuButton<String>(
-        onSelected: (value) async {
-          await BlocProvider.of<LoginCubit>(context)
-              .logout(currentUserType, context);
-        },
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 'logout',
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.red),
+          onSelected: (value) async {
+            await BlocProvider.of<LoginCubit>(context)
+                .logout(currentUserType, context);
+          },
+          itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Logout",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      Icon(
+                        Icons.logout,
+                        color: Colors.red,
+                      )
+                    ],
+                  ),
                 ),
-                Icon(
-                  Icons.logout,
-                  color: Colors.red,
-                )
               ],
-            ),
-          ),
-        ],
-        child: CircleAvatar(
-            radius: 25,
-            backgroundColor: AppColors.kLightOrange,
-            foregroundColor: AppColors.kBlue,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: Image.network(
-                "https://lh3.googleusercontent.com/a/ACg8ocIYqnQv3HFavFc07kKc9lDdPbTwszH1VoqM3QCHwgHRlWFB2ms=s96-c",
-                fit: BoxFit.fitHeight,
-              ),
-            )),
-      ),
+          child: currentUserType == UserType.normal
+              ? CircleAvatar(
+                  radius: 25,
+                  backgroundColor: AppColors.kLightOrange,
+                  foregroundColor: AppColors.kBlue,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      avatarUrl !,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ))
+              : CircleAvatar(
+                  radius: 25,
+                  backgroundColor: AppColors.kBlue,
+                  foregroundColor: AppColors.kOrange,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Icon(Icons.person,size: 32,)
+                  ))),
     );
   }
 }
-// Text(
-          
-//             userName.isNotEmpty
-//                 ? userName.substring(0, 2).toUpperCase()
-//                 : "U", // أول حرفين من الاسم
-//             style: TextStyle(color: AppColors.kLightBlue2, fontSize: 18),
-//           ),

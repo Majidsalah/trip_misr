@@ -96,6 +96,8 @@ class TripsRepo {
     }
   }
 
+  
+
   Future<Either<Failure, BookingModel>> createBooking(
       BookingModel booking) async {
     final user = Supabase.instance.client.auth.currentUser;
@@ -149,9 +151,8 @@ class TripsRepo {
           .from('bookings_full')
           .select('*, trips(*)')
           .eq("customer_id", userId);
-          // log(response.toString());
+      // log(response.toString());
       final trips = parseBookingResponse(response);
-          log(trips.first.tripModel!.governorate.toString());
 
       return right(trips);
     } catch (e) {

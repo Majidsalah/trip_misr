@@ -23,9 +23,9 @@ class ShPref {
     static getUserId() {
     sharedPreferences.get("userId");
   }
-  static getUserAvatar() {
-    sharedPreferences.get("avatar_url");
-  }
+  static String? getUserAvatar() {
+  return sharedPreferences.getString("avatar_url");
+}
 
   static UserType getUserType() {
     final index = sharedPreferences.getInt(_key);

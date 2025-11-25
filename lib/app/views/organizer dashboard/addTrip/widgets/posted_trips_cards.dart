@@ -7,7 +7,6 @@ import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/trip_s
 import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
 
-
 class PostedTripsCard extends StatelessWidget {
   const PostedTripsCard({super.key, required this.postedTrip});
   final TripModel postedTrip;
@@ -37,6 +36,7 @@ class PostedTripsCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          spacing: 8,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,24 +55,19 @@ class PostedTripsCard extends StatelessWidget {
                       children: [
                         Text(
                           postedTrip.title,
-                          style: AppFonts.kRegularFont.copyWith(
+                          style: AppFonts.kBoldFont.copyWith(
                             color: AppColors.kBlue,
                             fontSize: 20,
                           ),
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
                         ),
                         const SizedBox(width: 4),
                         _buildPopUpMenu(postedTrip.id ?? '', context),
                       ],
                     ),
-                    Text(
-                      postedTrip.title,
-                      style: AppFonts.kLightFont
-                          .copyWith(color: AppColors.kLightBlue1, fontSize: 15),
-                    ),
                     const SizedBox(height: 4),
                     Row(
+                      spacing: 6,
                       children: [
                         const Icon(Icons.group),
                         Text(
@@ -85,6 +80,7 @@ class PostedTripsCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Row(
+                      spacing: 6,
                       children: [
                         const Icon(Icons.schedule),
                         Text(
@@ -96,6 +92,7 @@ class PostedTripsCard extends StatelessWidget {
                       ],
                     ),
                     Row(
+                      spacing: 6,
                       children: [
                         const Icon(Icons.calendar_month),
                         Text(
@@ -114,17 +111,39 @@ class PostedTripsCard extends StatelessWidget {
             ),
             Row(
               children: [
-                Icon(Icons.luggage),
                 Text(
-                  'Bookings: ${postedTrip.totalBookings.toString()}',
-                  style: AppFonts.kRegularFont.copyWith(
-                    fontSize: 14,
+                  ' ${postedTrip.title}',
+                  style: AppFonts.kBoldFont
+                      .copyWith(fontSize: 12, color: AppColors.kOrange),
+                ),
+                Icon(
+                  Icons.swap_horiz,
+                  color: AppColors.kBlue,
+                ),
+                Text(
+                  ' ${postedTrip.governorate}',
+                  style: AppFonts.kBoldFont
+                      .copyWith(fontSize: 12, color: AppColors.kOrange),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.luggage,
+                  color: AppColors.kOrange,
+                  size: 32,
+                ),
+                Text(
+                  'Bookings : ${postedTrip.totalBookings.toString()}',
+                  style: AppFonts.kBoldFont.copyWith(
+                    fontSize: 18,
+                    color: AppColors.kBlue,
                   ),
                 ),
                 const SizedBox(width: 42),
-                TripSwitcher()
               ],
-            )
+            ),
           ],
         ),
       ),

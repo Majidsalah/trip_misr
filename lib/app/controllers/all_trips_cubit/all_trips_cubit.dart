@@ -7,6 +7,8 @@ part 'all_trips_state.dart';
 
 class AllTripsCubit extends Cubit<AllTripsState> {
   AllTripsCubit() : super(AllTripsInitial());
+  List<TripModel> allTrips = [];
+  List<TripModel> filteredTrips = [];
 
   final TripsRepo tripsRepo = TripsRepo();
   Future<void> getAllTrips() async {
@@ -14,7 +16,10 @@ class AllTripsCubit extends Cubit<AllTripsState> {
     final response = await tripsRepo.fetchAllTrips();
     response.fold(
       (fail) => emit(AllTripsFailed()),
-      (trips) => emit(AllTripsSuccess(trips)),
+      (trips) {
+        allTrips = trips;
+        emit(AllTripsSuccess(trips));
+      },
     );
   }
 
@@ -24,5 +29,14 @@ class AllTripsCubit extends Cubit<AllTripsState> {
         .toList();
   }
 
- 
+  void searchTrips(String from, String to) {
+    filteredTrips = allTrips.where((trip) {
+      final matchFrom = from.isEmpty || trip.governorate!.toLowerCase().contains(from.toLowerCase());
+      final matchTo =
+          to.isEmpty || trip.title.toLowerCase().contains(to.toLowerCase());
+      return matchFrom && matchTo;
+    }).toList();
+
+    emit(AllTripsSuccess(filteredTrips));
+  }
 }

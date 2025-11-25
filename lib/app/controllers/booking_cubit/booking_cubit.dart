@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:trip_misr/app/data/models/bookingModel.dart';
@@ -7,6 +9,11 @@ part 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
   BookingCubit() : super(BookingInitial());
+  @override
+  void onChange(Change<BookingState> change) {
+    log('BookingCubit change: $change');
+    super.onChange(change);
+  }
 
   Future<void> createBooking(BookingModel booking) async {
     final TripsRepo tripsRepo = TripsRepo();
