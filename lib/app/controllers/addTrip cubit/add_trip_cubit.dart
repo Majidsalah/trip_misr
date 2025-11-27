@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
-import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/app/data/repositories/add_trip_repo.dart';
 

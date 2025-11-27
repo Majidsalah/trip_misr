@@ -32,7 +32,7 @@ class _TripSwitcherState extends State<TripSwitcher> {
                 widget.isActive = !widget.isActive;
               });
             },
-            activeColor: AppColors.kOrange,
+            activeThumbColor: AppColors.kOrange,
           ),
         )
       ],

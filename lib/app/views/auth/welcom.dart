@@ -78,7 +78,7 @@ class Welcom extends StatelessWidget {
     );
   }
 
-  _buildLoginButtton(String text, {Widget? icon, Function()? onTap}) {
+  InkWell _buildLoginButtton(String text, {Widget? icon, Function()? onTap}) {
     return InkWell(
       onTap: onTap,
       highlightColor:AppColors.kOrange ,

@@ -1,12 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
-import 'package:trip_misr/app/controllers/addTrip%20cubit/add_trip_cubit.dart';
 import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
-import 'package:trip_misr/utils/snackBar.dart';
 class AddImageWidget extends StatefulWidget {
   const AddImageWidget({super.key, required this.controller});
   final MultiImagePickerController controller;

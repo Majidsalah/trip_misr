@@ -122,7 +122,7 @@ abstract class AppRouter {
 }
 
 Future<String> getInitialRoute() async {
-  final userType = await ShPref.getUserType();
+  final userType = ShPref.getUserType();
 
   if (userType == UserType.guest) {
     return AppRouter.kWelcome;

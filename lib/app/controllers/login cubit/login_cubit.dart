@@ -17,7 +17,7 @@ class LoginCubit extends Cubit<LoginState> {
     log(response.toString());
     response.fold(
       (failure) => emit(LoginFailed(failure.message)),
-      (sucess) => emit(LoginSuccess(sucess as SupabaseUser)),
+      (sucess) => emit(LoginSuccess(sucess)),
     );
   }
 
@@ -40,7 +40,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LogOutFailed());
     }
   }
- isSessionActive(){
+ void isSessionActive(){
   authrepo.userChecker();
 }
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:trip_misr/app/controllers/Usercubit/user_cubit.dart';
-import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
 import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_cards.dart';

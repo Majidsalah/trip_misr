@@ -5,7 +5,7 @@ class UserState {
   final int currentIndex;
   final UserType userType;
 
-  UserState({
+  const UserState({
     required this.currentIndex,
     required this.userType,
   });

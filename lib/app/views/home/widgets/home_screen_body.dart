@@ -197,7 +197,7 @@ Widget _buildCustomAppBar(context) {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Image.asset(AppColors.kLogo, height: 40),
+        Image.asset(AppColors.kLogo, height: 50,width: 120,),
         currentUserType() == UserType.guest
             ? TextButton(
                 onPressed: () {

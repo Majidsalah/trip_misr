@@ -33,10 +33,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
   bool? _meal1 = false;
   bool? _meal2 = false;
   bool? _meal3 = false;
-  List<String>? _vistsList = [];
-  List<String>? _activityList = [];
-  final TextEditingController? _vists = TextEditingController();
-  final TextEditingController? _activity = TextEditingController();
+  final List<String>? _vistsList = [];
+  final List<String>? _activityList = [];
+  final TextEditingController _vists = TextEditingController();
+  final TextEditingController _activity = TextEditingController();
   final TextEditingController title = TextEditingController();
   final TextEditingController? description = TextEditingController();
   final TextEditingController? governorate = TextEditingController();

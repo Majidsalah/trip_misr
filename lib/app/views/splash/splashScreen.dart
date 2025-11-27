@@ -44,7 +44,7 @@ class _SplashscreenState extends State<Splashscreen> {
             _buitAnimatedText2(),
             if (_showAnimatedText)
               Image.asset(
-                'assets/Layer 1.png',
+                'assets/Asset 3@2x.png',
                 height: 300,
                 width: 300,
               ),
@@ -79,7 +79,7 @@ class _SplashscreenState extends State<Splashscreen> {
 //   );
 // }
 
-_buitAnimatedText2() {
+SizedBox _buitAnimatedText2() {
   return SizedBox(
     width: 250.0,
     child: AnimatedTextKit(
