@@ -7,4 +7,6 @@ class AppColors {
   static Color kOrange = const Color(0xffFF5733);
   static Color kLightOrange = const Color(0xffFF9680);
   static Color kDisable = const Color(0xffDBE0E7);
+  static String kLogo = 'assets/mega.png';
+
 }

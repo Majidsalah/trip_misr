@@ -48,7 +48,6 @@ class PostedTripsView extends StatelessWidget {
                   IconButton(
                       onPressed: () {
                         context.read<HomeCubit>().changeTab(0);
-
                       },
                       icon: Icon(
                         Icons.arrow_back_ios,
@@ -62,11 +61,7 @@ class PostedTripsView extends StatelessWidget {
                   ),
                 ],
               ),
-                 Image.asset(
-          'assets/Asset 2@2x.png',
-          height: 40,
-        ),
-                const SizedBox(height: 16),
+              const SizedBox(height: 16),
               Expanded(
                 child: BlocBuilder<PostedTripsCubit, PostedTripsState>(
                   builder: (context, state) {
