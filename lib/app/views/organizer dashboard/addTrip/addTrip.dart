@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:trip_misr/app/controllers/Usercubit/user_cubit.dart';
 import 'package:trip_misr/app/controllers/addTrip%20cubit/add_trip_cubit.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/app/data/repositories/add_trip_repo.dart';
@@ -9,18 +11,21 @@ import 'package:trip_misr/component/custom_textField.dart';
 import 'package:trip_misr/app/views/details/details.dart';
 import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
+import 'package:trip_misr/utils/loading_indicator.dart';
 import 'package:trip_misr/utils/snackBar.dart';
 
 class AddTripScreen extends StatefulWidget {
   const AddTripScreen({super.key});
-
-
 
   @override
   State<AddTripScreen> createState() => _AddTripScreenState();
 }
 
 class _AddTripScreenState extends State<AddTripScreen> {
+  final MultiImagePickerController imageController = MultiImagePickerController(
+    maxImages: 5,
+    picker: AddImageWidget.customImagePicker, // نفس الفانكشن
+  );
   AddTripRepo addtrip = AddTripRepo();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -47,7 +52,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       lastDate: DateTime(2100),
     );
     setState(() => _selectedDate = pickedDate);
-    }
+  }
 
   Future<void> _pickTime() async {
     TimeOfDay? pickedTime = await showTimePicker(
@@ -81,7 +86,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  const AddImageWidget(),
+                  AddImageWidget(controller: imageController),
                   const SizedBox(height: 24),
                   CustomTextField(
                     lab: "Governorate",
@@ -115,17 +120,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
                       return '';
                     },
                   ),
-                  const SizedBox(height: 16),
-                  //  CustomTextField(
-                  //   lab: "Children",
-                  //   keyboardType: TextInputType.number,
-                  //   controller: ,
-                  // ),
-                  const SizedBox(height: 16),
-                  // const CustomTextField(
-                  //   lab: "Adult",
-                  //   keyboardType: TextInputType.number,
-                  // ),
                   const SizedBox(height: 16),
                   CustomTextField(
                     lab: "Price",
@@ -419,25 +413,27 @@ class _AddTripScreenState extends State<AddTripScreen> {
                         isActive: true,
                       );
                       await BlocProvider.of<AddTripCubit>(context)
-                          .addNewTrip(trip);
+                          .addNewTrip(trip, imageController);
                     },
                     child: BlocConsumer<AddTripCubit, AddTripState>(
                       listener: (context, state) {
-                        if (state is AddTripSuccess) {
-                          mySnackBar(context,
-                              sucess: "Trip added successfully");
+                        if (state is AddTripLoading ||
+                            state is TripImagesloading) {
+                          showProgressIndicator(context);
+                        } else {
                           Navigator.pop(context);
-                        } else if (state is AddTripFailed) {
-                          mySnackBar(context,
-                              failed: "Trip failed to added !!");
+                          if (state is AddTripSuccess) {
+                          
+                            mySnackBar(context,
+                                sucess: "Trip added successfully");
+                            context.read<HomeCubit>().changeTab(0);
+                          } else if (state is AddTripFailed) {
+                            mySnackBar(context,
+                                failed: "Trip failed to added !!");
+                          }
                         }
                       },
                       builder: (context, state) {
-                        if (state is AddTripLoading) {
-                          return const CircularProgressIndicator(
-                            color: Colors.white,
-                          );
-                        }
                         return Text(
                           'Post',
                           style: AppFonts.kRegularFont.copyWith(
@@ -448,7 +444,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 16),
                 ],
               ),

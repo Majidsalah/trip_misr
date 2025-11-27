@@ -8,18 +8,9 @@ import 'package:trip_misr/utils/app_colors.dart';
 import 'package:trip_misr/utils/app_fonts.dart';
 import 'package:trip_misr/utils/snackBar.dart';
 class AddImageWidget extends StatefulWidget {
-  const AddImageWidget({super.key});
-
-  @override
-  State<AddImageWidget> createState() => _AddImageWidgetState();
-}
-
-class _AddImageWidgetState extends State<AddImageWidget> {
-  final MultiImagePickerController _controller = MultiImagePickerController(
-    maxImages: 5,
-    picker: _customImagePicker,
-  );
-  static Future<List<ImageFile>> _customImagePicker(
+  const AddImageWidget({super.key, required this.controller});
+  final MultiImagePickerController controller;
+  static Future<List<ImageFile>> customImagePicker(
       int maxImages, Object? extra) async {
     final picker = ImagePicker();
     List<ImageFile> result = [];
@@ -42,20 +33,27 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
     return result;
   }
+  @override
+  State<AddImageWidget> createState() => _AddImageWidgetState();
+}
+
+class _AddImageWidgetState extends State<AddImageWidget> {
+ 
+
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 
   Future<void> _pickImages() async {
-    await _controller.pickImages();
+    await  widget.controller.pickImages();
     setState(() {});
   }
   @override
   Widget build(BuildContext context) {
-    final hasImages = _controller.images.isNotEmpty;
+    final hasImages =  widget.controller.images.isNotEmpty;
 
     return Column(
       children: [
@@ -101,7 +99,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: MultiImagePickerView(
-                  controller: _controller,
+                  controller:  widget.controller,
                   padding: const EdgeInsets.all(4),
                   initialWidget: DefaultInitialWidget(
                     backgroundColor: AppColors.kOrange.withOpacity(0.5),
@@ -109,27 +107,29 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    BlocProvider.of<AddTripCubit>(context)
-                        .setUploadedImages(_controller);
-                  },
-                  child: BlocConsumer<AddTripCubit, AddTripState>(
-                    listener: (context, state) {
-                      if (state is TripImagesUploaded) {
-                        mySnackBar(context, sucess: "Uploaded Successfully");
-                      } else if (state is TripImagesFailed) {
-                        mySnackBar(context, failed: "Failed to  Uploaded !!");
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is TripImagesloading) {
-                      return  const CircularProgressIndicator();
-                      }
+             
+             
+              // ElevatedButton(
+              //     onPressed: () async {
+              //       BlocProvider.of<AddTripCubit>(context)
+              //           .setUploadedImages( widget.controller);
+              //     },
+              //     child: BlocConsumer<AddTripCubit, AddTripState>(
+              //       listener: (context, state) {
+              //         if (state is TripImagesUploaded) {
+              //           mySnackBar(context, sucess: "Uploaded Successfully");
+              //         } else if (state is TripImagesFailed) {
+              //           mySnackBar(context, failed: "Failed to  Uploaded !!");
+              //         }
+              //       },
+              //       builder: (context, state) {
+              //         if (state is TripImagesloading) {
+              //         return  const CircularProgressIndicator();
+              //         }
 
-                      return const Text("Upload Images");
-                    },
-                  ))
+              //         return const Text("Upload Images");
+              //       },
+              //     ))
             ],
           ),
       ],

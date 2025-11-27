@@ -11,6 +11,7 @@ class AllTripsCubit extends Cubit<AllTripsState> {
   List<TripModel> filteredTrips = [];
 
   final TripsRepo tripsRepo = TripsRepo();
+
   Future<void> getAllTrips() async {
     emit(AllTripsLoading());
     final response = await tripsRepo.fetchAllTrips();
@@ -31,12 +32,16 @@ class AllTripsCubit extends Cubit<AllTripsState> {
 
   void searchTrips(String from, String to) {
     filteredTrips = allTrips.where((trip) {
-      final matchFrom = from.isEmpty || trip.governorate!.toLowerCase().contains(from.toLowerCase());
+      final matchFrom = from.isEmpty ||
+          trip.governorate!.toLowerCase().contains(from.toLowerCase());
       final matchTo =
           to.isEmpty || trip.title.toLowerCase().contains(to.toLowerCase());
       return matchFrom && matchTo;
     }).toList();
-
-    emit(AllTripsSuccess(filteredTrips));
+    if (filteredTrips.isEmpty) {
+      emit(FilteredTripsFailed());
+    } else {
+      emit(AllTripsSuccess(filteredTrips));
+    }
   }
 }

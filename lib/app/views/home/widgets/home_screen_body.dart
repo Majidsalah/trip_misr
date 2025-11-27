@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +7,6 @@ import 'package:trip_misr/app/controllers/login%20cubit/login_cubit.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
 import 'package:trip_misr/app/views/home/widgets/place_card_list.dart';
-import 'package:trip_misr/app/views/home/widgets/place_category_listg.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:trip_misr/app/views/home/widgets/user_avatar.dart';
 import 'package:trip_misr/utils/app_colors.dart';
@@ -44,70 +41,94 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           await Future.delayed(const Duration(milliseconds: 1000));
           await context.read<AllTripsCubit>().getAllTrips();
         },
-        child: SingleChildScrollView(
-          physics:
-              const AlwaysScrollableScrollPhysics(), // مهم لتفعيل السحب حتى بدون محتوى
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: BlocBuilder<AllTripsCubit, AllTripsState>(
-              builder: (context, state) {
-                final bool isLoading = state is AllTripsLoading;
-                final bool isSuccess = state is AllTripsSuccess;
-                final bool isFailed = state is AllTripsFailed;
+        child: BlocBuilder<AllTripsCubit, AllTripsState>(
+          builder: (context, state) {
+            final bool isLoading = state is AllTripsLoading;
+            final bool isSuccess = state is AllTripsSuccess;
+            final bool isFailed = state is AllTripsFailed;
+            final bool isFilteredEmpty = state is FilteredTripsFailed;
 
-                // 🟥 حالة الخطأ
-                if (isFailed) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.8,
-                    child: const Center(
-                      child: NoBookedTripsWidget(
-                        text: 'There was an error.\nPlease try again!',
+            // 🟥 حالة الخطأ
+            if (isFailed) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: Center(
+                  child: NoBookedTripsWidget(
+                    text: 'There was an error.\nPlease try again!',
+                    onPressed: () async =>
+                        await context.read<AllTripsCubit>().getAllTrips(),
+                  ),
+                ),
+              );
+            }
+
+            // 🟩 حالة النجاح أو التحميل
+            final images = isSuccess
+                ? context.read<AllTripsCubit>().getAllTripsImages(state.trips)
+                : <String>[
+                    'https://watchdiana.fail/blog/wp-content/themes/koji/assets/images/default-fallback-image.png'
+                  ];
+
+            return Skeletonizer(
+              enabled: isLoading,
+              effect: ShimmerEffect(
+                baseColor: AppColors.kDisable,
+                highlightColor: AppColors.kLightOrange.withOpacity(0.5),
+                duration: const Duration(seconds: 1),
+              ),
+              child: BlocProvider(
+                create: (context) => PostedTripsCubit(),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(child: _buildCustomAppBar(context)),
+                    SliverToBoxAdapter(child: const SizedBox(height: 16)),
+                    SliverToBoxAdapter(child: _buildWelcomeText()),
+                    SliverToBoxAdapter(child: const SizedBox(height: 8)),
+                    SliverToBoxAdapter(
+                        child: _buidSearchBar(
+                            context, fromController, toController)),
+                    SliverToBoxAdapter(child: _buildCardSwiper(images)),
+                    SliverToBoxAdapter(
+                      child: Divider(
+                        color: AppColors.kLightOrange,
+                        endIndent: 30,
+                        indent: 24,
                       ),
                     ),
-                  );
-                }
-
-                // 🟩 حالة النجاح أو التحميل
-                final images = isSuccess
-                    ? context
-                        .read<AllTripsCubit>()
-                        .getAllTripsImages(state.trips)
-                    : <String>[
-                        'https://wctjfsezefulwjxfyntu.supabase.co/storage/v1/object/public/trips_images/images/trip_1761350273672_1000125339.jpg'
-                      ];
-
-                return Skeletonizer(
-                  enabled: isLoading,
-                  effect: ShimmerEffect(
-                    baseColor: AppColors.kDisable,
-                    highlightColor: AppColors.kLightOrange.withOpacity(0.5),
-                    duration: const Duration(seconds: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildCustomAppBar(context),
-                      const SizedBox(height: 16),
-                      _buildWelcomeText(),
-                      const SizedBox(height: 8),
-                      _buidSearchBar(
-                          context, fromController, toController),
-                      _buildCardSwiper(images),
-                       Divider(color:  AppColors.kOrange,),
-                      // const PlaceCategoryList(),
-                      const SizedBox(height: 12),
-                      BlocProvider(
-                        create: (context) => PostedTripsCubit(),
-                        child: PlaceCardList(
-                          trips: isSuccess ? state.trips : [],
-                          images: images,
+                    SliverToBoxAdapter(child: const SizedBox(height: 12)),
+                    if (isFilteredEmpty)
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: const Center(
+                          child: NoBookedTripsWidget(
+                            text: 'No Trips Found',
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+                    if (isSuccess)
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return PlaceCardList(
+                              trip: state.trips[index],
+                              images: state.trips[index].images ?? [],
+                            );
+                          },
+                          childCount: state.trips.length,
+                        ),
+                      ),
+                    // SliverToBoxAdapter(
+                    //   child: Image.asset(
+                    //     'assets/logo.PNG',
+                    //     height: 40,
+                    //   ),
+                    // )
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -170,41 +191,43 @@ Widget _buidSearchBar(
 }
 
 Widget _buildCustomAppBar(context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      Image.asset(
-        'assets/homelogo.png',
-        height: 40,
-      ),
-      currentUserType() == UserType.guest
-          ? TextButton(
-              onPressed: () {
-                GoRouter.of(context).pushReplacement(AppRouter.kWelcome);
-              },
-              style: TextButton.styleFrom(backgroundColor: AppColors.kOrange),
-              child: Text(
-                'Login',
-                style: AppFonts.kBoldFont
-                    .copyWith(fontSize: 16, color: Colors.white),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Image.asset(
+          'assets/Asset 2@2x.png',
+          height: 40,
+        ),
+        currentUserType() == UserType.guest
+            ? TextButton(
+                onPressed: () {
+                  GoRouter.of(context).pushReplacement(AppRouter.kWelcome);
+                },
+                style: TextButton.styleFrom(backgroundColor: AppColors.kOrange),
+                child: Text(
+                  'Login',
+                  style: AppFonts.kBoldFont
+                      .copyWith(fontSize: 16, color: Colors.white),
+                ),
+              )
+            : BlocProvider(
+                create: (context) => LoginCubit(),
+                child: UserAvatar(
+                  avatarUrl: ShPref.getUserAvatar(),
+                  currentUserType: currentUserType(),
+                ),
               ),
-            )
-          : BlocProvider(
-              create: (context) => LoginCubit(),
-              child: UserAvatar(
-                avatarUrl: ShPref.getUserAvatar(),
-                currentUserType: currentUserType(),
-              ),
-            ),
-          
-    ],
+      ],
+    ),
   );
 }
 
 Widget _buildWelcomeText() {
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Text(
         'Where do you wanna go?',

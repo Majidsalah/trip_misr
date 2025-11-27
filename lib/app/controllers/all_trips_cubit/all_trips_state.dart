@@ -12,6 +12,7 @@ final class AllTripsSuccess extends AllTripsState {
 
 }
 final class AllTripsFailed extends AllTripsState {}
+final class FilteredTripsFailed extends AllTripsState {}
 final class TripImagesLoading extends AllTripsState {}
 final class TripImagesFailed extends AllTripsState {}
 final class TripImagesSuccess extends AllTripsState {

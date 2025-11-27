@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:trip_misr/app/controllers/Usercubit/user_cubit.dart';
+import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/controllers/postedTrip%20cubit/posted_trips_cubit.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
 import 'package:trip_misr/app/views/organizer%20dashboard/addTrip/widgets/posted_trips_cards.dart';
@@ -41,14 +43,30 @@ class PostedTripsView extends StatelessWidget {
           },
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Posted Trips',
-                  style: AppFonts.kBoldFont
-                      .copyWith(color: AppColors.kBlue, fontSize: 30),
-                ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        context.read<HomeCubit>().changeTab(0);
+
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.kBlue,
+                        size: 32,
+                      )),
+                  Text(
+                    'Posted Trips',
+                    style: AppFonts.kBoldFont
+                        .copyWith(color: AppColors.kBlue, fontSize: 30),
+                  ),
+                ],
               ),
+                 Image.asset(
+          'assets/Asset 2@2x.png',
+          height: 40,
+        ),
+                const SizedBox(height: 16),
               Expanded(
                 child: BlocBuilder<PostedTripsCubit, PostedTripsState>(
                   builder: (context, state) {

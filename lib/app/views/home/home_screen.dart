@@ -33,8 +33,6 @@ class Home extends StatelessWidget {
               floatingActionButton: state.userType == UserType.oragnizer
                   ? FloatingActionButton(
                       onPressed: () async {
-                        // final user = Supabase.instance.client.auth.currentUser;
-                        // log('${user!.id}: HOOOOme');
                         GoRouter.of(context).push(AppRouter.kAddTripScreen);
                       },
                       backgroundColor: AppColors.kOrange.withOpacity(0.8),
@@ -81,14 +79,14 @@ class Home extends StatelessWidget {
     switch (type) {
       case UserType.oragnizer:
         return [
-           HomeScreenBody(),
+          HomeScreenBody(),
           BlocProvider(
             create: (context) => PostedTripsCubit()..getOrganizerPostedTrips(),
             child: PostedTripsView(),
           ), // شاشة Trips للمنظم
         ];
       case UserType.normal:
-        return  [
+        return [
           HomeScreenBody(),
           BlocProvider(
             create: (context) => BookingCubit()..getBookedTripByCustomer(),

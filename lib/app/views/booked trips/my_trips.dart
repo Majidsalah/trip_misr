@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trip_misr/app/controllers/booking_cubit/booking_cubit.dart';
-import 'package:trip_misr/app/data/repositories/trips_repo.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/my_trips_card.dart';
 import 'package:trip_misr/app/views/booked%20trips/widgets/no_booked_trips.dart';
 import 'package:trip_misr/utils/app_fonts.dart';

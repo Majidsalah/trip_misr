@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:trip_misr/app/controllers/all_trips_cubit/all_trips_cubit.dart';
 import 'package:trip_misr/app/data/models/tripModel.dart';
 import 'package:trip_misr/app/data/repositories/add_trip_repo.dart';
 
@@ -12,7 +13,7 @@ class AddTripCubit extends Cubit<AddTripState> {
 
   List<String> uploadedImages = [];
 
-   setUploadedImages(MultiImagePickerController controller) async {
+   Future<void> setUploadedImages(MultiImagePickerController controller) async {
     emit(TripImagesloading());
 
     final response = await addTripRepo.uploadImages(controller);
@@ -25,12 +26,13 @@ class AddTripCubit extends Cubit<AddTripState> {
     );
   }
 
-  Future<void> addNewTrip(TripModel trip) async {
+  Future<void> addNewTrip(TripModel trip,MultiImagePickerController controller) async {
+   await setUploadedImages(controller);
     emit(AddTripLoading());
     final updatedTrip = trip.copyWith(images: uploadedImages);
 
     final response = await addTripRepo.createTrip(updatedTrip);
-
+    
     response.fold(
       (failure) => emit(AddTripFailed(failure.message)),
       (sucess) => emit(AddTripSuccess()),
